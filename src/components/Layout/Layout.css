@@ -1,0 +1,21 @@
+nav{
+    background-color: #103c8b;
+    overflow: hidden;
+}
+nav a{
+    text-decoration: None;
+    color: white;
+    padding: 10px;
+    float: left;
+    text-align: center;
+    display: block;
+}
+
+nav a:hover{
+    background-color: #6495ed;
+}
+
+nav ul,li{
+    display: inline;
+    align-content: stretch;
+}
