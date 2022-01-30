@@ -12,10 +12,12 @@ a {
   color: #61dafb;
 }
 
-.border{
-  border: 1px  solid white;
-}
 
 .icon {
   width: 1.5rem;
 }
+
+.App {
+  text-align: center;
+}
+

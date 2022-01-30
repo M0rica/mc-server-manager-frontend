@@ -5,8 +5,8 @@ import "./Layout.css"
 
 const Layout = () => {
     return (
-        <>
-            <nav>
+        <div>
+            <nav className="navbar">
                 <ul>
                     <li>
                         <Link to="/">Home</Link>
@@ -23,7 +23,7 @@ const Layout = () => {
             <Outlet />
 
             <h1>Footer</h1>
-        </>
+        </div>
     )
 };
 

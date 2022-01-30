@@ -19,3 +19,12 @@ nav ul,li{
     display: inline;
     align-content: stretch;
 }
+
+@media screen and (max-width: 600px) {
+    .navbar {
+        overflow: hidden;
+        position: fixed;
+        bottom: 0;
+        width: 100%;
+    }
+}
