@@ -11,7 +11,6 @@ import "./ServerComponent.css"
 export interface server_props {
     ip_address: string
     name: string
-    running: boolean  // deprecated
     settings?: any
     image_url?: string
     motd?: string

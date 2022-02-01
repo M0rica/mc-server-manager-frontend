@@ -1,8 +1,9 @@
-nav{
-    background-color: #103c8b;
+
+.navbar{
+    background-color: #23272a;
     overflow: hidden;
 }
-nav a{
+.navbar a{
     text-decoration: None;
     color: white;
     padding: 10px;
@@ -11,11 +12,15 @@ nav a{
     display: block;
 }
 
-nav a:hover{
+.navbar a:hover{
     background-color: #6495ed;
 }
 
-nav ul,li{
+.navbar li{
+    display: inline;
+    align-content: stretch;
+}
+.navbar ul{
     display: inline;
     align-content: stretch;
 }
