@@ -1,1 +1,36 @@
 
+@import "../../ColorPalette.css";
+
+.infoindicators {
+    display: block;
+    overflow: hidden;
+    background-color: #61dafb;
+}
+
+.circleprogbar {
+    width: 75px;
+    height: 75px;
+    float: left;
+}
+
+.round_container{
+    width: 50%;
+    background-color: var(--second);
+    border-radius: 20px;
+    float: left;
+}
+
+.round_container text {
+    display: block;
+}
+
+.round_container .info_text {
+    margin-left: 75px;
+}
+
+@media screen and (max-width: 400px) {
+    .round_container{
+        width: 100%;
+    }
+
+}

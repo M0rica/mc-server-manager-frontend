@@ -1,35 +1,53 @@
+@import "../ColorPalette.css";
 
-.navbar{
-    background-color: #23272a;
-    overflow: hidden;
+.navbar {
+    background-color: var(--second);
+    width: 100%;
+    overflow: auto;
+    padding: 10px 0;
 }
-.navbar a{
+
+.navbar a, Link {
     text-decoration: None;
     color: white;
     padding: 10px;
-    float: left;
-    text-align: center;
-    display: block;
 }
 
-.navbar a:hover{
-    background-color: #6495ed;
+.navbar li, ul {
+    list-style-type: none;
+    display: inline;
 }
 
-.navbar li{
-    display: inline;
-    align-content: stretch;
+.navbar a:hover {
+    background-color: var(--accent);
 }
-.navbar ul{
-    display: inline;
-    align-content: stretch;
+
+
+.navbar a.active {
+    background-color: var(--accent);
+}
+
+@media screen and (min-width: 601px) {
+    .navbar li {
+        float: left;
+    }
 }
 
 @media screen and (max-width: 600px) {
     .navbar {
-        overflow: hidden;
         position: fixed;
         bottom: 0;
         width: 100%;
+        text-align: center;
     }
+
+    .navbar li {
+        width: 25%;
+    }
+
+    .navbar text {
+        display: none;
+    }
+
 }
+

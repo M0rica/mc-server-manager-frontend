@@ -1,7 +1,7 @@
 import {useState} from "react";
 import {Link} from "react-router-dom";
 
-import {mdiBackspace} from "@mdi/js";
+import {mdiArrowLeft} from "@mdi/js";
 import {Icon} from "@mdi/react";
 
 import "./SideTabElement.css"
@@ -24,12 +24,12 @@ function SideTabElement(props: Props) {
         <div className="side_tab_bar">
             <ul>
                 <li>
-                    <Link to="/"><Icon path={mdiBackspace} size="16px"/> Back</Link>
+                    <Link to="/"><Icon path={mdiArrowLeft} size="16px"/> Back</Link>
                 </li>
                 {
                     props.elements.map((element, i) => {
                             return <li>
-                                <a onClick={() => set_current_index(i)}>{element.tab_text}</a>
+                                <a onClick={() => set_current_index(i)} className={current_index === i ? "active" : ""}>{element.tab_text}</a>
                             </li>
                         }
                     )

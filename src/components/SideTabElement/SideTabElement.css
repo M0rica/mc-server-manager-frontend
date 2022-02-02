@@ -3,10 +3,12 @@
 .side_tab_bar {
     margin: 0;
     padding: 0;
-    width: 200px;
     background-color: var(--primary);
-    height: 100%;
-    z-index: -1;
+}
+
+.side_tab_bar a,Link {
+    color: white;
+    text-decoration: none;
 }
 
 .side_tab_bar ul {
@@ -15,35 +17,32 @@
     padding: 0;
 }
 
-.side_tab_bar a {
-    color: white;
-    padding: 16px;
-    text-decoration: none;
-}
-
-.side_tab_bar a.active {
+.side_tab_bar a.active,Link.active {
     background-color: var(--accent);
     color: white;
 }
 
-.side_tab_bar a:hover {
+.side_tab_bar a:hover,Link:hover {
     background-color: var(--accent);
     color: white;
 }
 
-.side_tab_content {
-
-    background-color: green;
-    z-index: 10;
-}
 
 @media screen and (min-width: 701px) {
     .side_tab_bar {
-        position: fixed;
-        overflow: auto;
-    }
-    .side_tab_bar a{
         display: block;
+        float: left;
+        width: 200px;
+        height: 100%;
+    }
+    .side_tab_bar a,Link{
+        display: block;
+        color: white;
+        padding: 16px;
+        text-decoration: none;
+    }
+    .side_tab_content{
+        margin-left: 200px;
     }
 
 }
@@ -53,9 +52,12 @@
         width: 100%;
     }
 
-    .side_tab_bar a {
-        float: left;
-        display: block;
+    .side_tab_bar a,Link {
+        padding: 10px;
+    }
+
+    .side_tab_bar li,ul{
+        display: inline;
     }
 
     .side_tab_content {
@@ -63,10 +65,10 @@
     }
 }
 
-@media screen and (max-width: 400px) {
+@media screen and (max-width: 300px) {
     .side_tab_bar a {
         text-align: center;
-        float: none;
+        display: block;
     }
     .side_tab_bar li{
         display: list-item;
