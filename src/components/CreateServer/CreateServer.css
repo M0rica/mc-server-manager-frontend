@@ -1,46 +1,36 @@
 
+.create_options {
+    background-color: var(--second);
+    width: 100%;
+    border-radius: 10px;
 
-
-label {
-    float: right;
 }
 
-input[type=text], select, textarea {
-    width: 80%;
-    padding: 12px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    resize: vertical;
-    background-color: #23272a;
-    color: white;
+.row input[type=text] {
+    width: 100%;
 }
 
-
-.col-25 {
+.option_row {
+    width: 45%;
     float: left;
-    width: 25%;
-    margin-top: 6px;
 }
 
-.col-75 {
-    float: left;
-    width: 75%;
-    margin-top: 6px;
-}
 
-.row:after {
-    content: "";
-    display: table;
-    clear: both;
-}
-
-/* Responsive layout - when the screen is less than 600px wide, make the two columns stack on top of each other instead of next to each other */
 @media screen and (max-width: 600px) {
-    .col-25, .col-75, input[type=submit] {
+    .row input[type=submit] {
         width: 100%;
         margin-top: 0;
     }
     label {
         float: none;
     }
+    .create_options {
+        width: 100%;
+    }
+    .option_row {
+        width: 100%;
+        float: left;
+    }
+
 }
+
