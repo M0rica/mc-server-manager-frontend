@@ -4,7 +4,6 @@
 .infoindicators {
     display: block;
     overflow: hidden;
-    background-color: #61dafb;
 }
 
 .circleprogbar {
@@ -34,3 +33,18 @@
     }
 
 }
+
+.console {
+    width: 90%;
+    background-color: var(--second);
+    overflow: auto;
+    height: 300px;
+    border: 2px solid black;
+    margin: 10px auto;
+    text-align: left;
+    border-radius: 20px;
+    padding: 10px;
+    white-space: pre;
+    font-family: monospace;
+}
+

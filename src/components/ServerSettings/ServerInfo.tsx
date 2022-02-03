@@ -7,6 +7,7 @@ import "./ServerSettings.css"
 import SideTabElement, {ElementProps} from "../SideTabElement/SideTabElement"
 import {useState} from "react";
 import {get_size, precisionRound} from "../../utils/helper_functions";
+import {log_str} from "./log_str";
 
 const infos = {
     cpu_usage: 0.1,
@@ -49,6 +50,10 @@ function ServerInfo() {
                     <br/>
                 </div>
             </div>
+        </div>
+
+        <div className="console">
+                {log_str}
         </div>
     </div>
 }
