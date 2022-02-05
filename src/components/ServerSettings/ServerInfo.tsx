@@ -34,7 +34,6 @@ function ServerInfo() {
 
     const [data, set_data] = useState(infos)
 
-
     const percentage = precisionRound(data.mem_usage / data.max_mem * 100, 1)
 
     return <div className="main_content">

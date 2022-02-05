@@ -4,7 +4,7 @@
     background-color: var(--second);
     width: 100%;
     overflow: auto;
-    padding: 10px 0;
+    padding: 10px;
 }
 
 .navbar a, Link {
@@ -13,7 +13,7 @@
     padding: 10px;
 }
 
-.navbar li, ul {
+.navbar li,ul {
     list-style-type: none;
     display: inline;
 }
@@ -22,32 +22,38 @@
     background-color: var(--accent);
 }
 
-
 .navbar a.active {
     background-color: var(--accent);
 }
 
 @media screen and (min-width: 601px) {
-    .navbar li {
+    .navbar li{
         float: left;
+    }
+    .navbar br{
+        display: none;
     }
 }
 
 @media screen and (max-width: 600px) {
     .navbar {
+        height: 50px;
         position: fixed;
         bottom: 0;
         width: 100%;
         text-align: center;
+        right: 0;
+        overflow: visible;
     }
 
     .navbar li {
         width: 25%;
+        overflow: auto;
+    }
+    .navbar Link,a{
+        height: 100%;
     }
 
-    .navbar text {
-        display: none;
-    }
 
 }
 
