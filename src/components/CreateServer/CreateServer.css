@@ -3,7 +3,6 @@
     background-color: var(--second);
     width: 100%;
     border-radius: 10px;
-
 }
 
 .row input[type=text] {
@@ -11,12 +10,15 @@
 }
 
 .option_row {
-    width: 45%;
+    width: 47%;
     float: left;
 }
 
+.max_width {
+    width: 100%;
+}
 
-@media screen and (max-width: 600px) {
+@media screen and (max-width: 750px) {
     .row input[type=submit] {
         width: 100%;
         margin-top: 0;

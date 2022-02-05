@@ -65,7 +65,7 @@ function CreateServer() {
     // @ts-ignore
     return <div>
         <h2>Create new Server</h2>
-        <form onSubmit={submit}>
+        <form className="create_form" onSubmit={submit}>
             <div className="option_row">
                 <div className="create_options">
                     <h3>General Options</h3>
@@ -179,7 +179,7 @@ function CreateServer() {
             </div>
 
 
-            <div>
+            <div className="max_width">
                 <button type="submit">Create</button>
             </div>
         </form>
