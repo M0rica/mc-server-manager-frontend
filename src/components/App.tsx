@@ -15,28 +15,33 @@ const Layout = () => {
     const [active, set_active] = useState(0)
 
     return <div>
-            <nav className="navbar">
-                <ul>
-                    <li>
-                        <Link className={active === 0 ? "active" : ""} onClick={()=>set_active(0)} to="/">
-                           <Icon path={mdiViewList} className="icon"/> <text>Home</text></Link>
-        </li>
-                    <li>
-                        <Link className={active === 1 ? "active" : ""} onClick={()=>set_active(1)} to="/create">
-                            <Icon path={mdiPlus} className="icon"/> <text>Create</text>
-                        </Link>
-                    </li>
-                    <li>
-                        <Link className={active === 2 ? "active" : ""} to="/settings" onClick={()=>set_active(2)}>
-                            <Icon path={mdiCog} className="icon"/> <text>Settings</text></Link>
-                    </li>
-                </ul>
-            </nav>
+        <nav className="navbar">
+            <ul>
+                <li>
+                    <Link className={active === 0 ? "active" : ""} onClick={() => set_active(0)} to="/">
+                        <Icon path={mdiViewList} className="icon"/>
+                        Home
+                    </Link>
+                </li>
+                <li>
+                    <Link className={active === 1 ? "active" : ""} onClick={() => set_active(1)} to="/create">
+                        <Icon path={mdiPlus} className="icon"/>
+                        Create
+                    </Link>
+                </li>
+                <li>
+                    <Link className={active === 2 ? "active" : ""} to="/settings" onClick={() => set_active(2)}>
+                        <Icon path={mdiCog} className="icon"/>
+                        Settings
+                    </Link>
+                </li>
+            </ul>
+        </nav>
 
-            <Outlet />
+        <Outlet/>
 
-            <h1>Footer</h1>
-        </div>
+        <h1>Footer</h1>
+    </div>
 };
 
 function App() {

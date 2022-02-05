@@ -72,32 +72,33 @@
     padding: 10px;
 }
 
-.console text{
+.console textarea{
     width: 100%;
     height: 90%;
     overflow: auto;
     white-space: pre;
     font-family: monospace;
     display: inherit;
+    border: none;
 }
 
-.console text::-webkit-scrollbar{
+.console textarea::-webkit-scrollbar{
     width: 5px;
     color: var(--second);
     height: 5px;
 }
 
-.console text::-webkit-scrollbar-track {
+.console textarea::-webkit-scrollbar-track {
     background: none;
 }
 
 /* Handle */
-.console text::-webkit-scrollbar-thumb {
+.console textarea::-webkit-scrollbar-thumb {
     background: var(--primary);
 }
 
 /* Handle on hover */
-.console text::-webkit-scrollbar-thumb:hover {
+.console textarea::-webkit-scrollbar-thumb:hover {
     background: var(--accent);
 }
 

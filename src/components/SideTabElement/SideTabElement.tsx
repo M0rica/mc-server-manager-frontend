@@ -28,7 +28,7 @@ function SideTabElement(props: Props) {
                 </li>
                 {
                     props.elements.map((element, i) => {
-                            return <li>
+                            return <li key={element.tab_text}>
                                 <a onClick={() => set_current_index(i)} className={current_index === i ? "active" : ""}>{element.tab_text}</a>
                             </li>
                         }

@@ -28,8 +28,14 @@ function CreateServer() {
     const [form_data, set_data] = useState(initial_state)
 
     const handleChange = (event: { target: { name: any; value: any; }; }) => {
-        const name = event.target.name;
-        const value = event.target.value;
+        const name = event.target.name
+        const value = event.target.value
+        set_data(values => ({...values, [name]: value}))
+    }
+
+    const handle_change_checkbox = (event: {target: {name: any, checked: boolean}}) => {
+        const name = event.target.name
+        const value = event.target.checked
         set_data(values => ({...values, [name]: value}))
     }
 
@@ -106,7 +112,7 @@ function CreateServer() {
                     </Row>
 
                     <Row text="Allow Nether">
-                        <input type="checkbox" name="allow_nether" checked={form_data.allow_nether}/>
+                        <input type="checkbox" name="allow_nether" checked={form_data.allow_nether} onChange={handle_change_checkbox}/>
                     </Row>
 
                     <Row text="Motd">

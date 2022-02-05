@@ -18,13 +18,13 @@ const infos = {
     slots: 10,
 }
 
-function PlayerListEntry(props: { name: string, on_ban?: any, on_kick?: any}) {
+function PlayerListEntry(props: { name: string, on_ban?: any, on_kick?: any }) {
     return <li>
         <div className="player_entry">
-            <text>{props.name}</text>
+            {props.name}
             <div>
-                <button onClick={()=>props.on_ban(props.name)}>Ban</button>
-                <button onClick={()=>props.on_kick(props.name)}>Kick</button>
+                <button onClick={() => props.on_ban(props.name)}>Ban</button>
+                <button onClick={() => props.on_kick(props.name)}>Kick</button>
             </div>
         </div>
     </li>
@@ -46,12 +46,11 @@ function ServerInfo() {
                         <CircularProgressbar className="circleprogbar"
                                              value={percentage} text={percentage.toString() + "%"}/>
                         <div className="info_text">
-                            <text>
-                                Ram Usage
-                            </text>
-                            <text>
-                                {get_size(data.mem_usage)} / {get_size(data.max_mem)}
-                            </text>
+
+                            Ram Usage
+                            <br/>
+                            {get_size(data.mem_usage)} / {get_size(data.max_mem)}
+
                         </div>
                     </div>
 
@@ -60,10 +59,9 @@ function ServerInfo() {
                                              value={data.cpu_usage * 100}
                                              text={(data.cpu_usage * 100).toString() + "%"}/>
                         <div className="info_text">
-                            <text>
-                                CPU Usage
-                            </text>
-                            <br/>
+
+                            CPU Usage
+
                         </div>
                     </div>
                 </div>
@@ -74,7 +72,7 @@ function ServerInfo() {
                 </div>
 
                 <div className="console">
-                    <text>{log_str}</text>
+                    <textarea contentEditable={false} defaultValue={log_str}/>
                     <input type="text" placeholder="Type command"/>
                 </div>
             </div>
