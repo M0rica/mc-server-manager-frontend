@@ -4,13 +4,15 @@ import 'react-circular-progressbar/dist/styles.css';
 import "./ServerSettings.css"
 import SideTabElement, {ElementProps} from "../SideTabElement/SideTabElement"
 import {useEffect, useState} from "react";
-import {get_size, precisionRound} from "../../utils/helper_functions";
+import {precisionRound} from "../../utils/helper_functions";
 import {log_str} from "./log_str";
 import {Icon} from "@mdi/react";
 import {mdiRestart, mdiStop} from "@mdi/js";
-import { confirmAlert } from 'react-confirm-alert'
 import 'react-confirm-alert/src/react-confirm-alert.css'
-import {useParams} from "react-router-dom"; // Import css
+import {useParams} from "react-router-dom";
+import Dialog from "../Dialog/Dialog";
+import {default_ip} from "../../utils/globals";
+import {loading_server_data, ServerData} from "../../utils/types"; // Import css
 
 
 function PlayerListEntry(props: { name: string, on_action: any }) {
@@ -27,62 +29,31 @@ function PlayerListEntry(props: { name: string, on_action: any }) {
     </li>
 }
 
-function ServerInfo() {
-    const {server_name} = useParams()
-
-    const [data, set_data] = useState({
-        cpu_usage: 0.1,
-        mem_usage: 0,
-        max_mem: 8000000000,
-        players: 5,
-        slots: 10,
-    })
-
-    useEffect(() => {
-        if (server_name == "hypixel"){
-            set_data({
-                cpu_usage: 0.1,
-                mem_usage: 0,
-                max_mem: 8000000000,
-                players: 5,
-                slots: 10,
-            })
-        }
-        else{
-            set_data({
-                cpu_usage: 0.1,
-                mem_usage: 2147483648,
-                max_mem: 8000000000,
-                players: 5,
-                slots: 10,
-            })
-        }
-    }, [server_name])
+function ServerInfo(props: {server_data: ServerData}) {
+    const init_dlg_data = {
+        visible: false,
+        text: "",
+        buttons: [""]
+    }
+    const [dlg_data, set_dlg_data] = useState(init_dlg_data)
 
 
-    const percentage = precisionRound(data.mem_usage / data.max_mem * 100, 1)
+    const percentage = precisionRound(2000000 / props.server_data.hardware_config.ram * 100, 1)
 
     const kick_ban = (name: string, action: string) => {
-        const options = {
-            title: 'Confirmation',
-            message: `Do you want to ${action} ${name}`,
-            buttons: [
-                {
-                    label: 'Yes',
-                    onClick: () => alert('Click Yes')
-                },
-                {
-                    label: 'No',
-                    onClick: () => alert('Click No')
-                }
-            ]
-        }
-        confirmAlert(options)
+        set_dlg_data(
+            {visible: true, text: `Do you want to ${action} ${name}`, buttons: ["Yes", "No"]}
+        )
+    }
+    
+    const kick_ban_ready = (result: string) => {
+        console.log(dlg_data , result)
+        set_dlg_data(init_dlg_data)
     }
 
     return <div className="main_content">
         <h2>Info</h2>
-        <div className="layout" hidden={data.mem_usage == 0}>
+        <div className="layout" hidden={props.server_data.status!="running"}>
             <div className="server_info_content">
                 <div className="infoindicators">
                     <div className="mem_info round_container">
@@ -92,15 +63,14 @@ function ServerInfo() {
 
                             Ram Usage
                             <br/>
-                            {get_size(data.mem_usage)} / {get_size(data.max_mem)}
 
                         </div>
                     </div>
 
                     <div className="cpu_info round_container">
                         <CircularProgressbar className="circleprogbar"
-                                             value={data.cpu_usage * 100}
-                                             text={(data.cpu_usage * 100).toString() + "%"}/>
+                                             value={0.2 * 100}
+                                             text={(0.2 * 100).toString() + "%"}/>
                         <div className="info_text">
 
                             CPU Usage
@@ -131,10 +101,12 @@ function ServerInfo() {
             </div>
         </div>
 
-        <div className="layout" hidden={data.mem_usage != 0}>
+        <div className="layout" hidden={props.server_data.status != "running"}>
             Server is currently offline
             <button>Start Server</button>
         </div>
+        <Dialog options={dlg_data} result_ready={kick_ban_ready}/>
+
     </div>
 }
 
@@ -146,11 +118,29 @@ function ServerSettings() {
 
 
 function ServerTabs() {
-    // const {server_name} = useParams()
-    // for later
+    const {server_id} = useParams()
+    const [server_data, set_server_data] = useState(loading_server_data)
+
+    const update_servers = () => {
+        const ip = `${default_ip}/api/servers/${server_id}`
+        fetch(ip)
+            .then(response => response.json())
+            .then((server_list: { data: ServerData }) => {
+                  set_server_data(server_list.data)
+                }
+            )
+    }
+
+    useEffect(() => {
+        update_servers()
+        const interval = setInterval(() => {
+            update_servers()
+        }, 1000);
+        return () => clearInterval(interval);
+    }, []);
 
     const elements: ElementProps[] = [
-        {element: <ServerInfo/>, tab_text: "Info"},
+        {element: <ServerInfo server_data={server_data}/>, tab_text: "Info"},
         {element: <ServerSettings/>, tab_text: "Settings"}
     ]
 

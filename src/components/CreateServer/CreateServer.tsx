@@ -69,6 +69,7 @@ function CreateServer(props: { versions: string[] }) {
 
     return <div>
         <h2>Create new Server</h2>
+        <div className="form_content">
         <form className="create_form" onSubmit={submit}>
             <div className="option_row">
                 <div className="create_options">
@@ -183,11 +184,14 @@ function CreateServer(props: { versions: string[] }) {
                 </div>
             </div>
 
-
             <div className="max_width">
                 <button type="submit">Create</button>
+                <p>By creating the server, you accept <a
+                    href="https://account.mojang.com/documents/minecraft_eula">EULA</a> and <a
+                    href="https://go.microsoft.com/fwlink/?LinkId=521839">Privacy policy</a> by Mojang</p>
             </div>
         </form>
+        </div>
     </div>
 }
 

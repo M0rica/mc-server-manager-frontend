@@ -30,7 +30,7 @@
 }
 
 .round_container{
-    width: 45%;
+    width: 48%;
     background-color: var(--second);
     border-radius: 20px;
     float: left;
@@ -54,19 +54,17 @@
     }
     .player_list {
         float: none;
-        width: 80%;
-        margin: 20px auto;
+        width: 100%;
 
     }
 
 }
 
 .console {
-    width: 90%;
+    width: 100%;
     background-color: var(--second);
     height: 300px;
     border: 2px solid black;
-    margin: 10px auto;
     text-align: left;
     border-radius: 20px;
     padding: 10px;

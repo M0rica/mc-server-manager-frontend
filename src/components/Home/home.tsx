@@ -1,41 +1,48 @@
 import React, {useEffect, useState} from "react";
-import Server, {server_props} from "../ServerElement/ServerComponent";
-
-
-function get_servers(): server_props[] {
-    // return sth with fetch
-    const gommehd: server_props = {
-        name: "gomme",
-        ip_address: "gommehd.net",
-        image_url: "https://external-content.duckduckgo.com/iu/?u=http%3A%2F%2Fwww.freeiconspng.com%2Fuploads%2Fminecraft-server-icon-2.png&f=1&nofb=1",
-    }
-    const hypixel: server_props = {
-        name: "hypixel",
-        ip_address: "mc.hypixel.net",
-        image_url: "https://external-content.duckduckgo.com/iu/?u=http%3A%2F%2Fpm1.narvii.com%2F6484%2Fcd5f637c173e7766d7fde16145b07a0913a7d0e4_hq.jpg&f=1&nofb=1",
-    }
-    return [
-        gommehd, hypixel
-    ]
-}
+import {default_ip} from "../../utils/globals";
+import {ServerData} from "../../utils/types";
+import Server from "../ServerElement/ServerComponent";
+import {Link} from "react-router-dom";
 
 function Home() {
-    const [servers, set_servers] = useState(get_servers())
-    const [server_props, set_server_props] = useState()
+    const [servers, set_servers] = useState({})
+
+    const update_servers = () => {
+        const ip = default_ip + "/api/servers"
+        fetch(ip)
+            .then(response => response.json())
+            .then((server_list: { data: { [key: string]: ServerData } }) => {
+                    set_servers(server_list.data)
+                }
+            )
+    }
 
     useEffect(() => {
-        // fetch server info
-    }, [])
+        update_servers()
+        const interval = setInterval(() => {
+            update_servers()
+        }, 5000);
+        return () => clearInterval(interval);
+    }, []);
 
-    return <>
+
+    return <div>
         <h2>Server List</h2>
         {
-            servers.map((server) => {
-                return <Server server={server} key={server.name}/>
-            })
+            Object.keys(servers).length > 0
+                // Show server list if serves exist
+                ? Object.keys(servers).map((key) => {
+                        // @ts-ignore
+                        return <Server server={servers[key]} key={key}/>
+                    }
+                )
+                : <div>
+                    <p>You have no servers</p>
+                    <Link to="/create">Create Server</Link>
+                </div>
         }
 
-    </>
+    </div>
 }
 
 export default Home

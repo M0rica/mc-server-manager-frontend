@@ -68,7 +68,7 @@ function App() {
                         <Route index element={<Home/>}/>
                         <Route path="create" element={<CreateServer versions={versions}/>}/>
                         <Route path="settings" element={<Settings/>}/>
-                        <Route path="settings/:server_name" element={<ServerTabs/>}/>
+                        <Route path="settings/:server_id" element={<ServerTabs/>}/>
                         <Route path="*" element={<h1>404</h1>}/>
                     </Route>
                 </Routes>

@@ -46,3 +46,9 @@ Link {
     float: right;
     alignment: top;
 }
+
+@media screen and (max-width: 600px) {
+    .server_element {
+        width: 100%;
+    }
+}
