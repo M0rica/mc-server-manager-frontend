@@ -4,7 +4,8 @@
     background-color: var(--second);
     width: 100%;
     overflow: auto;
-    padding: 10px;
+    padding-bottom: 10px;
+    padding-top: 10px;
 }
 
 .navbar a, Link {

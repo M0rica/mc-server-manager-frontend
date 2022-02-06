@@ -76,5 +76,15 @@ input[type=number]{
 }
 input[type=number]:hover{
   -webkit-appearance: none;
+  -moz-appearance: none;
 }
 
+@media screen and (min-width: 600px){
+  .content {
+    width: 90%;
+    display: inherit;
+    overflow: hidden;
+    padding-left: 5%;
+    padding-right: 5%;
+  }
+}

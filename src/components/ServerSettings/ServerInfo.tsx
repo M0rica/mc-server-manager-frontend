@@ -101,7 +101,7 @@ function ServerInfo(props: {server_data: ServerData}) {
             </div>
         </div>
 
-        <div className="layout" hidden={props.server_data.status != "running"}>
+        <div className="layout" hidden={props.server_data.status != "stopped"}>
             Server is currently offline
             <button>Start Server</button>
         </div>
