@@ -3,29 +3,28 @@ import React, {useState} from "react";
 import "./CreateServer.css"
 import Row from "../UtilComponents/ResponsiveFormRow";
 import {default_ip} from "../../utils/globals";
+import {useNavigate} from "react-router-dom";
 
-function get_versions(): string[] {
-    return ["latest", "1.18", "1.8.9"]
+
+const initial_state = {
+    name: "Minecraft Server",
+    world_name: "world",
+    seed: "",
+    version: "latest",
+    gamemode: "surivival",
+    leveltype: "default",
+    difficulty: 1,
+    type: "spigot",
+    slots: 10,
+    port: 25565,
+    allow_nether: true,
+    motd: "Welcome to my Server"
 }
 
-
-function CreateServer() {
-    const initial_state = {
-        name: "Minecraft Server",
-        world_name: "world",
-        seed: "",
-        version: "latest",
-        gamemode: "surivival",
-        level_type: "default",
-        difficulty: 1,
-        type: "spigot",
-        slots: 10,
-        port: 25565,
-        allow_nether: true,
-        motd: "Welcome to my Server"
-    }
+function CreateServer(props: { versions: string[] }) {
 
     const [form_data, set_data] = useState(initial_state)
+    let nav = useNavigate()
 
     const handleChange = (event: { target: { name: any; value: any; }; }) => {
         const name = event.target.name
@@ -33,7 +32,7 @@ function CreateServer() {
         set_data(values => ({...values, [name]: value}))
     }
 
-    const handle_change_checkbox = (event: {target: {name: any, checked: boolean}}) => {
+    const handle_change_checkbox = (event: { target: { name: any, checked: boolean } }) => {
         const name = event.target.name
         const value = event.target.checked
         set_data(values => ({...values, [name]: value}))
@@ -42,12 +41,17 @@ function CreateServer() {
     const submit = (e: any) => {
         e.preventDefault()
 
-        alert(JSON.stringify(form_data, null, 4))
-
         const requestOptions = {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify(form_data)
+            body: JSON.stringify({
+                "name": form_data.name,
+                "type": form_data.type,
+                "version": form_data.version,
+                "seed": form_data.seed,
+                "gamemode": form_data.gamemode,
+                "leveltype": form_data.leveltype
+            })
         }
         fetch(`${default_ip}/api/servers`, requestOptions)
             .then(async response => {
@@ -57,12 +61,12 @@ function CreateServer() {
                     const error = (data && data.message) || response.status;
                     return Promise.reject(error);
                 }
+                nav("/")
+
             })
-            .catch(error => console.error(error));
+            .catch(error => alert(error));
     }
 
-    // @ts-ignore
-    // @ts-ignore
     return <div>
         <h2>Create new Server</h2>
         <form className="create_form" onSubmit={submit}>
@@ -79,7 +83,7 @@ function CreateServer() {
                     <Row text="Server Type: ">
                         <select name="type" onChange={handleChange}
                                 defaultValue={initial_state.type}>
-                            <option value="default">Vanilla Minecraft</option>
+                            <option value="minecraft">Vanilla Minecraft</option>
                             <option value="spigot">Spigot</option>
                             <option value="craftbukkit">Bukkit</option>
                         </select>
@@ -89,7 +93,7 @@ function CreateServer() {
                         <select name="version" onChange={handleChange}
                                 defaultValue={initial_state.version}>
                             {
-                                get_versions().map((version: string) => {
+                                props.versions.map((version: string) => {
                                         return <option value={version} key={version}>{version}</option>
                                     }
                                 )
@@ -112,7 +116,8 @@ function CreateServer() {
                     </Row>
 
                     <Row text="Allow Nether">
-                        <input type="checkbox" name="allow_nether" checked={form_data.allow_nether} onChange={handle_change_checkbox}/>
+                        <input type="checkbox" name="allow_nether" checked={form_data.allow_nether}
+                               onChange={handle_change_checkbox}/>
                     </Row>
 
                     <Row text="Motd">
@@ -161,7 +166,7 @@ function CreateServer() {
 
                     <Row text="Level Type: ">
                         <select name="level_type" onChange={handleChange}
-                                defaultValue={initial_state.level_type}>
+                                defaultValue={initial_state.leveltype}>
                             <option value={"DEFAULT"}>Default</option>
                             <option value={"AMPLIFIED"}>Amplified</option>
                             <option value={"FLAT"}>Flat</option>

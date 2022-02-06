@@ -1,8 +1,8 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import Server, {server_props} from "../ServerElement/ServerComponent";
 
 
-function get_servers(): server_props[]{
+function get_servers(): server_props[] {
     // return sth with fetch
     const gommehd: server_props = {
         name: "gomme",
@@ -21,8 +21,11 @@ function get_servers(): server_props[]{
 
 function Home() {
     const [servers, set_servers] = useState(get_servers())
-
     const [server_props, set_server_props] = useState()
+
+    useEffect(() => {
+        // fetch server info
+    }, [])
 
     return <>
         <h2>Server List</h2>
