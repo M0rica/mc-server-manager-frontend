@@ -13,17 +13,11 @@ import Dialog from "../Dialog/Dialog";
 import {default_ip} from "../../utils/globals";
 import {loading_server_data, ServerData} from "../../utils/types";
 import ServerSettings from "./ServerSettings";
+import useWebSocket, {ReadyState} from "react-use-websocket";
 
 
 interface SocketMessage {
-    cpu: {
-        percent: number
-    }
-    memory: {
-        "total": number,
-        "used": number,
-        "server": number
-    }
+
     stdout: string
 }
 
@@ -51,42 +45,27 @@ function ServerInfo(props: { server_data: ServerData }) {
         action: ""
     }
     const [dlg_data, set_dlg_data] = useState(init_dlg_data)
+    const [server_updates, set_current_update] = useState<SocketMessage>({stdout: ""})
 
-    const [server_updates, set_current_update] = useState<SocketMessage>()
-    try {
-        useEffect(() => {
-            if (props.server_data.id == 0){
-                return
-            }
+    const {
+        lastJsonMessage,
+        readyState
+    } = useWebSocket(`ws://localhost:5000/api/servers/${props.server_data.id}/datastream`)
 
-            const client = new WebSocket(default_ip.replace(
-                "http://", "ws://").replace("https://", "ws://") + `/api/servers/${props.server_data.id}/datastream`)
+    useEffect(() => {
+        if (lastJsonMessage != null) {
+            set_current_update({stdout: server_updates.stdout + lastJsonMessage["stdout"]})
+        }
+    }, [lastJsonMessage])
 
-            client.onerror = (err) => {
-                console.log(err)
-            }
+    const connectionStatus = {
+        [ReadyState.CONNECTING]: 'Connecting',
+        [ReadyState.OPEN]: 'Open',
+        [ReadyState.CLOSING]: 'Closing',
+        [ReadyState.CLOSED]: 'Closed',
+        [ReadyState.UNINSTANTIATED]: 'Uninstantiated',
+    }[readyState];
 
-            client.onopen = () => {
-
-            }
-
-            client.onmessage = (msg) => {
-                const parsedData: SocketMessage = JSON.parse(msg.data)
-
-                set_current_update({
-                        cpu: parsedData.cpu,
-                        memory: parsedData.memory,
-                        stdout: server_updates?.stdout + parsedData.stdout
-                    }
-                )
-
-            }
-
-        }, [props.server_data.id])
-
-    } catch (err) {
-
-    }
     const percentage = precisionRound(840 / props.server_data.hardware_config.ram * 100, 1)
 
     const kick_ban = (name: string, action: string) => {
@@ -109,8 +88,6 @@ function ServerInfo(props: { server_data: ServerData }) {
             payload = {action: action, action_data: data}
         }
 
-        console.log(payload)
-
         const requestOptions = {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
@@ -131,7 +108,6 @@ function ServerInfo(props: { server_data: ServerData }) {
             .catch(error => alert(error));
     }
 
-
     const kick_ban_ready = (result: string) => {
         console.log(dlg_data, result)
         if (result == "No") {
@@ -144,7 +120,7 @@ function ServerInfo(props: { server_data: ServerData }) {
     return <div className="main_content">
         <h2>Info</h2>
         <div className="layout"
-             hidden={!(props.server_data.status == "running" || props.server_data.status == "starting")}>
+             hidden={!(["running", "starting"].includes(props.server_data.status))}>
             <div className="server_info_content">
                 <div className="infoindicators">
                     <div className="mem_info round_container">

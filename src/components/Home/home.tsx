@@ -26,7 +26,6 @@ function Home() {
         update_servers()
         const interval = setInterval(() => {
             update_servers()
-            console.log(failed_requests)
         }, 5000);
         return () => clearInterval(interval);
     }, []);
