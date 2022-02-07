@@ -18,7 +18,10 @@ import useWebSocket, {ReadyState} from "react-use-websocket";
 
 interface SocketMessage {
 
-    stdout: string
+    "cpu": { "percent": number },
+    "memory": { "total": number, "used": number, "server": number },
+    "stdout": string
+
 }
 
 function PlayerListEntry(props: { name: string, on_action: any }) {
@@ -45,8 +48,11 @@ function ServerInfo(props: { server_data: ServerData }) {
         action: ""
     }
     const [dlg_data, set_dlg_data] = useState(init_dlg_data)
-    const [server_updates, set_current_update] = useState<SocketMessage>({stdout: ""})
-
+    const [server_updates, set_current_update] = useState<SocketMessage>({
+        cpu: {percent: 0},
+        memory: {server: 0, total: 0, used: 0},
+        stdout: ""
+    })
     const {
         lastJsonMessage,
         readyState
@@ -54,7 +60,11 @@ function ServerInfo(props: { server_data: ServerData }) {
 
     useEffect(() => {
         if (lastJsonMessage != null) {
-            set_current_update({stdout: server_updates.stdout + lastJsonMessage["stdout"]})
+            set_current_update({
+                cpu: lastJsonMessage.cpu,
+                memory: lastJsonMessage.memory,
+                stdout: server_updates?.stdout + lastJsonMessage.stdout
+            })
         }
     }, [lastJsonMessage])
 
@@ -66,7 +76,6 @@ function ServerInfo(props: { server_data: ServerData }) {
         [ReadyState.UNINSTANTIATED]: 'Uninstantiated',
     }[readyState];
 
-    const percentage = precisionRound(840 / props.server_data.hardware_config.ram * 100, 1)
 
     const kick_ban = (name: string, action: string) => {
         set_dlg_data(
@@ -117,15 +126,26 @@ function ServerInfo(props: { server_data: ServerData }) {
         do_action(dlg_data.action, {player: dlg_data.player})
         set_dlg_data(init_dlg_data)
     }
+    let memory_percentage = 0
+    if (server_updates?.memory != undefined) {
+        memory_percentage = server_updates?.memory.server / server_updates?.memory.total * 100
+    }
+    let cpu_percentage = 0
+    if (server_updates?.cpu != undefined) {
+        cpu_percentage = server_updates?.cpu.percent
+    }
+
     return <div className="main_content">
         <h2>Info</h2>
         <div className="layout"
              hidden={!(["running", "starting"].includes(props.server_data.status))}>
             <div className="server_info_content">
                 <div className="infoindicators">
+
                     <div className="mem_info round_container">
                         <CircularProgressbar className="circleprogbar"
-                                             value={percentage} text={percentage.toString() + "%"}/>
+                                             value={memory_percentage}
+                                             text={precisionRound(memory_percentage, 2) + "%"}/>
                         <div className="info_text">
 
                             Ram Usage
@@ -136,8 +156,8 @@ function ServerInfo(props: { server_data: ServerData }) {
 
                     <div className="cpu_info round_container">
                         <CircularProgressbar className="circleprogbar"
-                                             value={0.2 * 100}
-                                             text={(0.2 * 100).toString() + "%"}/>
+                                             value={cpu_percentage}
+                                             text={cpu_percentage.toString() + "%"}/>
                         <div className="info_text">
 
                             CPU Usage
@@ -206,7 +226,7 @@ function ServerTabs() {
         update_servers()
         const interval = setInterval(() => {
             update_servers()
-        }, 1000);
+        }, 10000);
         return () => clearInterval(interval);
     }, []);
 
