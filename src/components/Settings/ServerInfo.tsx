@@ -5,7 +5,6 @@ import "./ServerSettings.css"
 import SideTabElement, {ElementProps} from "../SideTabElement/SideTabElement"
 import {useEffect, useState} from "react";
 import {precisionRound} from "../../utils/helper_functions";
-import {log_str} from "./log_str";
 import {Icon} from "@mdi/react";
 import {mdiRestart, mdiStop} from "@mdi/js";
 import 'react-confirm-alert/src/react-confirm-alert.css'
@@ -13,8 +12,20 @@ import {useNavigate, useParams} from "react-router-dom";
 import Dialog from "../Dialog/Dialog";
 import {default_ip} from "../../utils/globals";
 import {loading_server_data, ServerData} from "../../utils/types";
-import ServerSettings from "./ServerSettings"; // Import css
+import ServerSettings from "./ServerSettings";
 
+
+interface SocketMessage {
+    cpu: {
+        percent: number
+    }
+    memory: {
+        "total": number,
+        "used": number,
+        "server": number
+    }
+    stdout: string
+}
 
 function PlayerListEntry(props: { name: string, on_action: any }) {
 
@@ -41,7 +52,41 @@ function ServerInfo(props: { server_data: ServerData }) {
     }
     const [dlg_data, set_dlg_data] = useState(init_dlg_data)
 
+    const [server_updates, set_current_update] = useState<SocketMessage>()
+    try {
+        useEffect(() => {
+            if (props.server_data.id == 0){
+                return
+            }
 
+            const client = new WebSocket(default_ip.replace(
+                "http://", "ws://").replace("https://", "ws://") + `/api/servers/${props.server_data.id}/datastream`)
+
+            client.onerror = (err) => {
+                console.log(err)
+            }
+
+            client.onopen = () => {
+
+            }
+
+            client.onmessage = (msg) => {
+                const parsedData: SocketMessage = JSON.parse(msg.data)
+
+                set_current_update({
+                        cpu: parsedData.cpu,
+                        memory: parsedData.memory,
+                        stdout: server_updates?.stdout + parsedData.stdout
+                    }
+                )
+
+            }
+
+        }, [props.server_data.id])
+
+    } catch (err) {
+
+    }
     const percentage = precisionRound(840 / props.server_data.hardware_config.ram * 100, 1)
 
     const kick_ban = (name: string, action: string) => {
@@ -131,7 +176,7 @@ function ServerInfo(props: { server_data: ServerData }) {
                 </div>
 
                 <div className="console">
-                    <textarea contentEditable={false} defaultValue={log_str}/>
+                    <textarea contentEditable={false} defaultValue={server_updates?.stdout}/>
                     <input type="text" placeholder="Type command"/>
                 </div>
             </div>

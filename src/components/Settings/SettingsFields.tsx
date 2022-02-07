@@ -115,14 +115,18 @@ export function OtherSettings(props: { handle_change: any, handle_cb_change: any
 
     return <div className="create_options option_row">
         <h3>Other</h3>
-        <Row text="Allow Nether">
-            <input type="checkbox" name="allow_nether" checked={props.form_data.allow_nether}
-                   onChange={props.handle_cb_change}/>
-        </Row>
         <Row text="Motd">
             <input type="text" value={props.form_data.motd}
                    name="motd" onChange={props.handle_change}
                    placeholder={props.form_data["motd"]}/>
+        </Row>
+        <Row text="Allow Nether">
+            <input type="checkbox" name="allow_nether" checked={props.form_data.allow_nether}
+                   onChange={props.handle_cb_change}/>
+        </Row>
+        <Row text="PvP">
+            <input type="checkbox" name="pvp" checked={props.form_data.pvp}
+                   onChange={props.handle_cb_change}/>
         </Row>
 
     </div>

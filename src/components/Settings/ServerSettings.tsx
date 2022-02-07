@@ -20,6 +20,7 @@ function ServerSettings(props: { server_data: Properties }) {
         set_data(values => ({...values, [name]: value}))
         set_option(values => ({...values, [name]: value}))
     }
+
     const handle_cb_change = (event: { target: { name: string; checked: any; }; }) => {
         const name = event.target.name
         const value = event.target.checked
