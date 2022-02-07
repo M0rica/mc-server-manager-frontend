@@ -1,3 +1,5 @@
+import {Properties} from "../components/Settings/SettingsModels";
+
 export interface ServerData {
     id: number,
     name: string,
@@ -18,7 +20,7 @@ export interface ServerData {
         version: string,
         created_at: string
     },
-    server_properties: {},
+    server_properties: Properties,
     online_stats: {
         ping?: number
         players?: string[]
@@ -36,6 +38,14 @@ export const loading_server_data: ServerData = {
     online_stats: {},
     path: {base_path: "", jar_path: "", server_properties_file: ""},
     server_manager_data: {created_at: "", installed: false, version: ""},
-    server_properties: {},
-    status: "Loading"
+    status: "Loading",
+    server_properties: {
+        difficulty: 1,
+        motd: "",
+        "max-players": 0,
+        "server-port": 25565,
+        gamemode: "survival",
+        pvp: true,
+        allow_nether: true
+    }
 }

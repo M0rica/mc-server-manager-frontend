@@ -9,6 +9,7 @@ import {mdiLoading} from "@mdi/js";
 function Home() {
     const [servers, set_servers] = useState({})
     const [servers_loaded, set_servers_loaded] = useState(false)
+    const [failed_requests, set_failed_requests] = useState(0)
 
     const update_servers = () => {
         const ip = default_ip + "/api/servers"
@@ -18,13 +19,14 @@ function Home() {
                     set_servers(server_list.data)
                     set_servers_loaded(true)
                 }
-            )
+            ).catch(() => set_failed_requests(failed_requests + 1))
     }
 
     useEffect(() => {
         update_servers()
         const interval = setInterval(() => {
             update_servers()
+            console.log(failed_requests)
         }, 5000);
         return () => clearInterval(interval);
     }, []);
@@ -36,15 +38,15 @@ function Home() {
                     return <Server server={servers[key]} key={key}/>
                 }
             )
-        }
-        else if (servers_loaded){
+        } else if (servers_loaded) {
             return <div>
                 <p>You have no servers</p>
                 <Link to="/create">Create Server</Link>
             </div>
-        }
-        else {
+        } else if (failed_requests == 0) {
             return <Icon path={mdiLoading} spin={2} size={"50px"}/>
+        } else {
+            return <h3>Server Error</h3>
         }
     }
 

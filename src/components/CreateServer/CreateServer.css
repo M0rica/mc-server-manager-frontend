@@ -1,44 +1,16 @@
 
-.create_options {
-    background-color: var(--second);
-    border-radius: 10px;
-    margin: 10px;
-    padding: 10px;
-}
-
 .form_content {
     width: 100%;
     overflow: hidden;
     margin: 0;
 }
 
-.row input[type=text] {
-    width: 100%;
-}
 
-.option_row {
-    width: 50%;
-    margin: 0;
-    float: left;
-    overflow: auto;
-
-}
 .max_width {
     width: 100%;
     overflow: hidden;
 }
 
 
-@media screen and (max-width: 750px) {
-    .row input[type=submit] {
-        width: 100%;
-        margin-top: 0;
-    }
 
-    .option_row {
-        width: 100%;
-        overflow: hidden;
-    }
-
-}
 

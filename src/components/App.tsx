@@ -6,7 +6,7 @@ import {BrowserRouter, Link, Outlet, Route, Routes} from "react-router-dom";
 import CreateServer from "./CreateServer/CreateServer";
 import Home from "./Home/home";
 import Settings from "./settings";
-import ServerTabs from "./ServerSettings/ServerInfo";
+import ServerTabs from "./Settings/ServerInfo";
 import Icon from "@mdi/react";
 import {mdiCog, mdiPlus, mdiViewList} from "@mdi/js";
 import {default_ip} from "../utils/globals";
