@@ -18,8 +18,7 @@ import ServerSettings from "./ServerSettings";
 interface SocketMessage {
 
     "cpu": { "percent": number },
-    "memory": { "total": number, "used": number, "server": number },
-    "stdout": string
+    "memory"?: { "total": number, "used": number, "server": number },
 
 }
 
@@ -49,25 +48,26 @@ function ServerInfo(props: { server_data: ServerData , update_servers: Function}
         action: ""
     }
     const [dlg_data, set_dlg_data] = useState(init_dlg_data)
-    const [server_updates, set_current_update] = useState<SocketMessage>({
-        cpu: {percent: 0},
-        memory: {server: 0, total: 0, used: 0},
-        stdout: ""
-    })
+    const [server_updates, set_current_update] = useState<SocketMessage>()
+
+    const stdout = useRef("")
 
     const ws = useRef<WebSocket>()
 
     useEffect(() => {
-        if(props.server_data.id == 0){
+        if(props.server_data.id == 0 || props.server_data.status == "stopped"){
             return
         }
         ws.current = new WebSocket(`ws://localhost:5000/api/servers/${props.server_data.id}/datastream`)
 
         ws.current.onmessage = (msg) => {
             const data = JSON.parse(msg.data)
+
             set_current_update({
-                cpu: data.cpu, memory: data.memory, stdout: server_updates.stdout + data.stdout
+                cpu: data.cpu, memory: data.memory,
             })
+
+            stdout.current = stdout.current + data.stdout
         }
 
         ws.current.onopen = () => {
@@ -85,7 +85,7 @@ function ServerInfo(props: { server_data: ServerData , update_servers: Function}
             ws.current?.close()
         }
 
-    } , [props.server_data.id])
+    } , [props.server_data.id, props.server_data.status])
 
 
 
@@ -104,10 +104,10 @@ function ServerInfo(props: { server_data: ServerData , update_servers: Function}
     const do_action = (action: string, data?: {}) => {
         if(action == "start"){
             set_current_update({
-                cpu: server_updates.cpu,
-                memory: server_updates.memory,
-                stdout: ""
+                cpu: {percent: 0},
+                memory: {server: 0, total: 1, used: 0},
             })
+            stdout.current = ""
 
         }
         let payload;
@@ -193,7 +193,7 @@ function ServerInfo(props: { server_data: ServerData , update_servers: Function}
                 </div>
 
                 <div className="console">
-                    <textarea readOnly={true} value={server_updates?.stdout}/>
+                    <textarea readOnly={true} value={stdout.current}/>
                     <input type="text" placeholder="Type command"/>
                 </div>
             </div>
