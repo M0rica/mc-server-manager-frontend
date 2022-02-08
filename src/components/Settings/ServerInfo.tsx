@@ -13,12 +13,12 @@ import Dialog from "../Dialog/Dialog";
 import {default_ip} from "../../utils/globals";
 import {loading_server_data, ServerData} from "../../utils/types";
 import ServerSettings from "./ServerSettings";
-import {animateScroll} from "react-scroll"
 
 interface SocketMessage {
 
     "cpu": { "percent": number },
     "memory"?: { "total": number, "used": number, "server": number },
+    full_log?: boolean
 
 }
 
@@ -38,7 +38,7 @@ function PlayerListEntry(props: { name: string, on_action: any }) {
 }
 
 
-function ServerInfo(props: { server_data: ServerData, update_servers: Function }) {
+function ServerInfo(this: any, props: { server_data: ServerData, update_servers: Function }) {
     const init_dlg_data = {
         visible: false,
         text: "",
@@ -53,9 +53,9 @@ function ServerInfo(props: { server_data: ServerData, update_servers: Function }
     const ws = useRef<WebSocket>()
 
     const scrollToBottom = () => {
-        animateScroll.scrollToBottom({
-            containerId: "ta_console"
-        });
+        const text_area = document.getElementById("ta_console")
+        if (text_area != null)
+            text_area.scrollTop = text_area.scrollHeight
     }
 
     useEffect(() => {
@@ -68,11 +68,16 @@ function ServerInfo(props: { server_data: ServerData, update_servers: Function }
             const data = JSON.parse(msg.data)
 
             set_current_update({
-                cpu: data.cpu, memory: data.memory,
+                cpu: data.cpu, memory: data.memory
             })
 
-            stdout.current = stdout.current + data.stdout
-            scrollToBottom()
+            if (data.full_log) {
+                stdout.current = ""
+            }
+            if (data.stdout != "") {
+                stdout.current = stdout.current + data.stdout
+                scrollToBottom()
+            }
         }
 
         ws.current.onopen = () => {
@@ -139,6 +144,7 @@ function ServerInfo(props: { server_data: ServerData, update_servers: Function }
 
             })
             .catch(error => alert(error));
+
         props.update_servers()
     }
 

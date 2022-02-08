@@ -19,7 +19,6 @@ function SideTabElement(props: Props) {
 
     const [current_index, set_current_index] = useState(0)
 
-
     return <div>
         <div className="side_tab_bar">
             <ul>
