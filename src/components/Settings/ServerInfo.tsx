@@ -13,7 +13,7 @@ import Dialog from "../Dialog/Dialog";
 import {default_ip} from "../../utils/globals";
 import {loading_server_data, ServerData} from "../../utils/types";
 import ServerSettings from "./ServerSettings";
-
+import {animateScroll} from "react-scroll"
 
 interface SocketMessage {
 
@@ -38,8 +38,7 @@ function PlayerListEntry(props: { name: string, on_action: any }) {
 }
 
 
-
-function ServerInfo(props: { server_data: ServerData , update_servers: Function}) {
+function ServerInfo(props: { server_data: ServerData, update_servers: Function }) {
     const init_dlg_data = {
         visible: false,
         text: "",
@@ -51,11 +50,16 @@ function ServerInfo(props: { server_data: ServerData , update_servers: Function}
     const [server_updates, set_current_update] = useState<SocketMessage>()
 
     const stdout = useRef("")
-
     const ws = useRef<WebSocket>()
 
+    const scrollToBottom = () => {
+        animateScroll.scrollToBottom({
+            containerId: "ta_console"
+        });
+    }
+
     useEffect(() => {
-        if(props.server_data.id == 0 || props.server_data.status == "stopped"){
+        if (props.server_data.id == 0 || props.server_data.status == "stopped") {
             return
         }
         ws.current = new WebSocket(`ws://localhost:5000/api/servers/${props.server_data.id}/datastream`)
@@ -68,6 +72,7 @@ function ServerInfo(props: { server_data: ServerData , update_servers: Function}
             })
 
             stdout.current = stdout.current + data.stdout
+            scrollToBottom()
         }
 
         ws.current.onopen = () => {
@@ -85,8 +90,7 @@ function ServerInfo(props: { server_data: ServerData , update_servers: Function}
             ws.current?.close()
         }
 
-    } , [props.server_data.id, props.server_data.status])
-
+    }, [props.server_data.id, props.server_data.status])
 
 
     const kick_ban = (name: string, action: string) => {
@@ -102,7 +106,7 @@ function ServerInfo(props: { server_data: ServerData , update_servers: Function}
     }
 
     const do_action = (action: string, data?: {}) => {
-        if(action == "start"){
+        if (action == "start") {
             set_current_update({
                 cpu: {percent: 0},
                 memory: {server: 0, total: 1, used: 0},
@@ -193,7 +197,7 @@ function ServerInfo(props: { server_data: ServerData , update_servers: Function}
                 </div>
 
                 <div className="console">
-                    <textarea readOnly={true} value={stdout.current}/>
+                    <textarea id="ta_console" readOnly={true} value={stdout.current}/>
                     <input type="text" placeholder="Type command"/>
                 </div>
             </div>
