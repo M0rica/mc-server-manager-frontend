@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import './App.css';
 import "./Navbar.css"
-import {BrowserRouter, Link, Outlet, Route, Routes} from "react-router-dom";
+import {BrowserRouter, Link, Outlet, Route, Routes, useLocation} from "react-router-dom";
 
 import CreateServer from "./CreateServer/CreateServer";
 import Home from "./Home/home";
@@ -13,25 +13,25 @@ import {default_ip} from "../utils/globals";
 
 
 const Layout = () => {
-    const [active, set_active] = useState(0)
+    const location = useLocation().pathname
 
     return <div>
         <nav className="navbar">
             <ul>
                 <li>
-                    <Link className={active === 0 ? "active" : ""} onClick={() => set_active(0)} to="/">
+                    <Link className={location === "/" ? "active" : ""} to="/">
                         <Icon path={mdiViewList} className="icon"/>
                         Home
                     </Link>
                 </li>
                 <li>
-                    <Link className={active === 1 ? "active" : ""} onClick={() => set_active(1)} to="/create">
+                    <Link className={location === "/create" ? "active" : ""} to="/create">
                         <Icon path={mdiPlus} className="icon"/>
                         Create
                     </Link>
                 </li>
                 <li>
-                    <Link className={active === 2 ? "active" : ""} to="/settings" onClick={() => set_active(2)}>
+                    <Link className={location === "/settings" ? "active" : ""} to="/settings">
                         <Icon path={mdiCog} className="icon"/>
                         Settings
                     </Link>
@@ -68,7 +68,7 @@ function App() {
                         <Route index element={<Home/>}/>
                         <Route path="create" element={<CreateServer versions={versions}/>}/>
                         <Route path="settings" element={<Settings/>}/>
-                        <Route path="settings/:server_id" element={<ServerTabs/>}/>
+                        <Route path="server/:server_id" element={<ServerTabs/>}/>
                         <Route path="*" element={<h1>404</h1>}/>
                     </Route>
                 </Routes>

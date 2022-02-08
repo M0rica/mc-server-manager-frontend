@@ -1,4 +1,4 @@
-import {Properties, ServerCreationGeneral, WorldGenerationSettings} from "./SettingsModels";
+import {Properties, ServerCreationGeneral, WorldGenerationSettings} from "../Settings/SettingsModels";
 import Row from "../UtilComponents/ResponsiveFormRow";
 import React from "react";
 
@@ -121,7 +121,7 @@ export function OtherSettings(props: { handle_change: any, handle_cb_change: any
                    placeholder={props.form_data["motd"]}/>
         </Row>
         <Row text="Allow Nether">
-            <input type="checkbox" name="allow_nether" checked={props.form_data.allow_nether}
+            <input type="checkbox" name="allow-nether" checked={props.form_data["allow-nether"]}
                    onChange={props.handle_cb_change}/>
         </Row>
         <Row text="PvP">

@@ -17,7 +17,7 @@ export interface Properties {
     "server-port"?: number
     "gamemode"?: string
     "pvp"?: boolean
-    "allow_nether"?: boolean
+    "allow-nether"?: boolean
 }
 
 export interface AdvancedSettings{

@@ -13,7 +13,7 @@ function Server(props: { server: ServerData }) {
 
     let nav = useNavigate()
 
-    return <div className="server_element" onClick={() => nav(`/settings/${props.server.id}`)}>
+    return <div className="server_element" onClick={() => nav(`/server/${props.server.id}`)}>
 
         <div className="img">
             <img className="server_img" src={props.server.name} alt="Cannot display image"/>

@@ -1,4 +1,4 @@
-import {GeneralServerSettings, OtherSettings} from "./SettingsFields";
+import {GeneralServerSettings, OtherSettings} from "../SettingsFields/SettingsFields";
 import React, {useState} from "react";
 import {Properties} from "./SettingsModels";
 

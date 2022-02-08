@@ -46,6 +46,6 @@ export const loading_server_data: ServerData = {
         "server-port": 25565,
         gamemode: "survival",
         pvp: true,
-        allow_nether: true
+        "allow-nether": true
     }
 }
