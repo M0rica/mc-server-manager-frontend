@@ -3,7 +3,7 @@ import 'react-circular-progressbar/dist/styles.css';
 
 import "./ServerSettings.css"
 import SideTabElement, {ElementProps} from "../SideTabElement/SideTabElement"
-import {useEffect, useState} from "react";
+import {useEffect, useRef, useState} from "react";
 import {precisionRound} from "../../utils/helper_functions";
 import {Icon} from "@mdi/react";
 import {mdiRestart, mdiStop} from "@mdi/js";
@@ -13,7 +13,6 @@ import Dialog from "../Dialog/Dialog";
 import {default_ip} from "../../utils/globals";
 import {loading_server_data, ServerData} from "../../utils/types";
 import ServerSettings from "./ServerSettings";
-import useWebSocket, {ReadyState} from "react-use-websocket";
 
 
 interface SocketMessage {
@@ -39,7 +38,9 @@ function PlayerListEntry(props: { name: string, on_action: any }) {
     </li>
 }
 
-function ServerInfo(props: { server_data: ServerData }) {
+
+
+function ServerInfo(props: { server_data: ServerData , update_servers: Function}) {
     const init_dlg_data = {
         visible: false,
         text: "",
@@ -53,28 +54,39 @@ function ServerInfo(props: { server_data: ServerData }) {
         memory: {server: 0, total: 0, used: 0},
         stdout: ""
     })
-    const {
-        lastJsonMessage,
-        readyState
-    } = useWebSocket(`ws://localhost:5000/api/servers/${props.server_data.id}/datastream`)
+
+    const ws = useRef<WebSocket>()
 
     useEffect(() => {
-        if (lastJsonMessage != null) {
+        if(props.server_data.id == 0){
+            return
+        }
+        ws.current = new WebSocket(`ws://localhost:5000/api/servers/${props.server_data.id}/datastream`)
+
+        ws.current.onmessage = (msg) => {
+            const data = JSON.parse(msg.data)
             set_current_update({
-                cpu: lastJsonMessage.cpu,
-                memory: lastJsonMessage.memory,
-                stdout: server_updates?.stdout + lastJsonMessage.stdout
+                cpu: data.cpu, memory: data.memory, stdout: server_updates.stdout + data.stdout
             })
         }
-    }, [lastJsonMessage])
 
-    const connectionStatus = {
-        [ReadyState.CONNECTING]: 'Connecting',
-        [ReadyState.OPEN]: 'Open',
-        [ReadyState.CLOSING]: 'Closing',
-        [ReadyState.CLOSED]: 'Closed',
-        [ReadyState.UNINSTANTIATED]: 'Uninstantiated',
-    }[readyState];
+        ws.current.onopen = () => {
+            console.log("Websocket opened")
+        }
+
+        ws.current.onerror = (err) => {
+            console.log(err)
+        }
+
+        ws.current.onclose = () => {
+            console.log("Websocket closed")
+        }
+        return () => {
+            ws.current?.close()
+        }
+
+    } , [props.server_data.id])
+
 
 
     const kick_ban = (name: string, action: string) => {
@@ -90,6 +102,14 @@ function ServerInfo(props: { server_data: ServerData }) {
     }
 
     const do_action = (action: string, data?: {}) => {
+        if(action == "start"){
+            set_current_update({
+                cpu: server_updates.cpu,
+                memory: server_updates.memory,
+                stdout: ""
+            })
+
+        }
         let payload;
         if (data == undefined)
             payload = {action: action}
@@ -115,6 +135,7 @@ function ServerInfo(props: { server_data: ServerData }) {
 
             })
             .catch(error => alert(error));
+        props.update_servers()
     }
 
     const kick_ban_ready = (result: string) => {
@@ -172,7 +193,7 @@ function ServerInfo(props: { server_data: ServerData }) {
                 </div>
 
                 <div className="console">
-                    <textarea contentEditable={false} defaultValue={server_updates?.stdout}/>
+                    <textarea readOnly={true} value={server_updates?.stdout}/>
                     <input type="text" placeholder="Type command"/>
                 </div>
             </div>
@@ -231,7 +252,7 @@ function ServerTabs() {
     }, []);
 
     const elements: ElementProps[] = [
-        {element: <ServerInfo server_data={server_data}/>, tab_text: "Info"},
+        {element: <ServerInfo server_data={server_data} update_servers={update_servers}/>, tab_text: "Info"},
         {element: <ServerSettings server_data={server_data.server_properties}/>, tab_text: "Settings"}
     ]
 
