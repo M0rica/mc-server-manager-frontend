@@ -144,8 +144,11 @@ function ServerInfo(this: any, props: { server_data: ServerData, update_servers:
 
             })
             .catch(error => alert(error));
+        setTimeout(() => {
+                props.update_servers()
+            }, 1000
+        )
 
-        props.update_servers()
     }
 
     const kick_ban_ready = (result: string) => {
