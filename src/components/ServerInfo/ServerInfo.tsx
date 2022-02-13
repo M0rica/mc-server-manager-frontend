@@ -5,8 +5,6 @@ import "./ServerSettings.css"
 import SideTabElement, {ElementProps} from "../SideTabElement/SideTabElement"
 import {useEffect, useRef, useState} from "react";
 import {precisionRound} from "../../utils/helper_functions";
-import {Icon} from "@mdi/react";
-import {mdiRestart, mdiStop} from "@mdi/js";
 import 'react-confirm-alert/src/react-confirm-alert.css'
 import {useNavigate, useParams} from "react-router-dom";
 import Dialog from "../Dialog/Dialog";
@@ -46,8 +44,10 @@ function PlayerListEntry(props: { player: Player, on_action: any }) {
 
     let actions: actions_map[] = []
     actions.push(!props.player.is_banned ? {action: "ban", text: "Ban"} : {action: "pardon", text: "Pardon"})
-    actions.push(!props.player.is_op ? {action: "op", text: "Op"} : {action: "deop", text: "Deop"})
-    actions.push({action: "kick", text: "Kick"})
+    if (!props.player.is_banned)
+        actions.push(!props.player.is_op ? {action: "op", text: "Op"} : {action: "deop", text: "Deop"})
+    if (props.player.is_online)
+        actions.push({action: "kick", text: "Kick"})
 
     return <li>
         <div className="player_entry">
@@ -60,6 +60,8 @@ function PlayerListEntry(props: { player: Player, on_action: any }) {
                     })
                 }
             </div>
+            {props.player.ban_reason}
+
         </div>
 
     </li>
@@ -131,6 +133,10 @@ function ServerInfo(this: any, props: { server_data: ServerData, update_servers:
 
         ws.current.onclose = () => {
             console.log("Websocket closed")
+            set_current_update({
+                cpu: {percent: 0},
+                memory: {server: 0, total: props.server_data.hardware_config.ram, used: 0}
+            })
         }
         return () => {
             ws.current?.close()
@@ -209,16 +215,22 @@ function ServerInfo(this: any, props: { server_data: ServerData, update_servers:
         cpu_percentage = server_updates?.cpu.percent
     }
 
+    const server_status_text = {
+        "running": "Server is running on port " + props.server_data.network_config.port,
+        "starting": "Server is starting",
+        "stopped": "Server is stopped"
+    }[props.server_data.status]
+
     return <div className="main_content">
-        <h2>Info</h2>
-        <div className="layout"
-             hidden={!(["running", "starting"].includes(props.server_data.status))}>
+        <div className="layout">
             <div className="server_info_content">
+                <h2>Info</h2>
+                <p>{server_status_text}</p>
                 <div className="infoindicators">
 
                     <div className="mem_info round_container">
                         <CircularProgressbar className="circleprogbar"
-                                             value={memory_percentage}
+                                             value={props.server_data.status != "stopped" ? memory_percentage : 0}
                                              text={precisionRound(memory_percentage, 2) + "%"}/>
                         <div className="info_text">
 
@@ -241,8 +253,9 @@ function ServerInfo(this: any, props: { server_data: ServerData, update_servers:
                 </div>
 
                 <div className="buttons">
-                    <button onClick={() => do_action("stop")}><Icon path={mdiStop} className="icon"/> Stop</button>
-                    <button><Icon path={mdiRestart} className="icon"/> Restart</button>
+                    <button onClick={() => do_action("stop")} hidden={props.server_data.status != "running"}>Stop</button>
+                    <button hidden={props.server_data.status != "running"}>Restart</button>
+                    <button onClick={() => do_action("start")} hidden={props.server_data.status != "stopped"}>Start Server</button>
                 </div>
 
                 <div className="console">
@@ -253,27 +266,45 @@ function ServerInfo(this: any, props: { server_data: ServerData, update_servers:
 
             <div className="player_list">
                 <h3>Player List</h3>
-                <ul>
-                    {
-                        player_list?.online.map((player: Player) => {
-                            return <PlayerListEntry player={player} on_action={(name: string, action: string) => {
-                                kick_ban(name, action)
-                            }} key={player.name}/>
-                        })
-                    }
-                </ul>
-
+                <div className="create_options">
+                    <h4>Online Players</h4>
+                    <ul>
+                        {
+                            player_list?.online.map((player: Player) => {
+                                return <PlayerListEntry player={player} on_action={(name: string, action: string) => {
+                                    kick_ban(name, action)
+                                }} key={player.name}/>
+                            })
+                        }
+                    </ul>
+                </div>
+                <div className="create_options">
+                    <h4>Banned Players</h4>
+                    <ul>
+                        {
+                            player_list?.banned.map((player: Player) => {
+                                return <PlayerListEntry player={player} on_action={(name: string, action: string) => {
+                                    kick_ban(name, action)
+                                }} key={player.name}/>
+                            })
+                        }
+                    </ul>
+                </div>
+                <div className="create_options">
+                    <h4>Server Operators</h4>
+                    <ul>
+                        {
+                            player_list?.op.map((player: Player) => {
+                                return <PlayerListEntry player={player} on_action={(name: string, action: string) => {
+                                    kick_ban(name, action)
+                                }} key={player.name}/>
+                            })
+                        }
+                    </ul>
+                </div>
             </div>
         </div>
 
-        <div className="layout" hidden={props.server_data.status != "stopped"}>
-            Server is offline
-            <button onClick={() => do_action("start")}>Start Server</button>
-        </div>
-
-        <div className="layout" hidden={props.server_data.status != "installing"}>
-            Server gets installed
-        </div>
         <Dialog options={dlg_data} result_ready={kick_ban_ready}/>
 
     </div>
