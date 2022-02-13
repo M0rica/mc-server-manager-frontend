@@ -45,7 +45,7 @@ function CreateServer(props: { versions: string[] }) {
                     return Promise.reject(error);
                 }
                 if(data.id != 0){
-                    nav(`/settings/${data.id}`)
+                    nav(`/server/${data.id}`)
                 }
 
             })

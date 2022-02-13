@@ -22,15 +22,43 @@ interface SocketMessage {
 
 }
 
-function PlayerListEntry(props: { name: string, on_action: any }) {
+interface Player {
+    "name": "Dummerle123"
+    "is_online": boolean
+    "is_op": boolean
+    "is_banned": boolean
+    "ban_reason": string
+    "ban_since": string
+}
+
+interface PlayerList {
+    online: Player[]
+    banned: Player[]
+    op: Player[]
+}
+
+function PlayerListEntry(props: { player: Player, on_action: any }) {
+
+    type actions_map = {
+        action: string
+        text: string
+    }
+
+    let actions: actions_map[] = []
+    actions.push(!props.player.is_banned ? {action: "ban", text: "Ban"} : {action: "pardon", text: "Pardon"})
+    actions.push(!props.player.is_op ? {action: "op", text: "Op"} : {action: "deop", text: "Deop"})
+    actions.push({action: "kick", text: "Kick"})
 
     return <li>
         <div className="player_entry">
-            {props.name}
+            {props.player.name}
             <div>
-                <button onClick={() => props.on_action(props.name, "ban")}>Ban</button>
-                <button onClick={() => props.on_action(props.name, "kick")}>Kick</button>
-                <button onClick={() => props.on_action(props.name, "op")}>Op</button>
+                {
+                    actions.map((action: actions_map) => {
+                        return <button
+                            onClick={() => props.on_action(props.player.name, action.action)}>{action.text}</button>
+                    })
+                }
             </div>
         </div>
 
@@ -48,6 +76,7 @@ function ServerInfo(this: any, props: { server_data: ServerData, update_servers:
     }
     const [dlg_data, set_dlg_data] = useState(init_dlg_data)
     const [server_updates, set_current_update] = useState<SocketMessage>()
+    const [player_list, set_players] = useState<PlayerList>()
 
     const stdout = useRef("")
     const ws = useRef<WebSocket>()
@@ -57,6 +86,18 @@ function ServerInfo(this: any, props: { server_data: ServerData, update_servers:
         if (text_area != null)
             text_area.scrollTop = text_area.scrollHeight
     }
+
+    const update_players = () => {
+        fetch(`${default_ip}/api/servers/${props.server_data.id}/players`)
+            .then((resp) => resp.json())
+            .then((data: PlayerList) => {
+                set_players(data)
+            })
+    }
+
+    useEffect(() => {
+        update_players()
+    }, [props.server_data.id])
 
     useEffect(() => {
         if (props.server_data.id == 0 || props.server_data.status == "stopped") {
@@ -96,7 +137,6 @@ function ServerInfo(this: any, props: { server_data: ServerData, update_servers:
         }
 
     }, [props.server_data.id, props.server_data.status])
-
 
     const kick_ban = (name: string, action: string) => {
         set_dlg_data(
@@ -140,12 +180,12 @@ function ServerInfo(this: any, props: { server_data: ServerData, update_servers:
                     const error = (data && data.message) || response.status;
                     return Promise.reject(error);
                 }
-                console.log(response)
 
             })
             .catch(error => alert(error));
         setTimeout(() => {
                 props.update_servers()
+                update_players()
             }, 1000
         )
 
@@ -214,9 +254,13 @@ function ServerInfo(this: any, props: { server_data: ServerData, update_servers:
             <div className="player_list">
                 <h3>Player List</h3>
                 <ul>
-                    <PlayerListEntry name="NoobMaster3000" on_action={(name: string, action: string) => {
-                        kick_ban(name, action)
-                    }}/>
+                    {
+                        player_list?.online.map((player: Player) => {
+                            return <PlayerListEntry player={player} on_action={(name: string, action: string) => {
+                                kick_ban(name, action)
+                            }} key={player.name}/>
+                        })
+                    }
                 </ul>
 
             </div>
