@@ -1,4 +1,4 @@
-import {Properties} from "../components/Settings/SettingsModels";
+import {Properties} from "../components/ServerInfo/SettingsModels";
 
 export interface ServerData {
     id: number,

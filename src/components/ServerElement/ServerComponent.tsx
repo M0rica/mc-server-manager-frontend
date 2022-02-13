@@ -26,7 +26,8 @@ function Server(props: { server: ServerData }) {
             {
                 props.server.online_stats.players == undefined
                     ? <p>Offline</p>
-                    : <p>{props.server.online_stats.players.toString() +"/"+ (props.server.server_properties["max-players"] || 1).toString()}</p>
+                    : <p>{props.server.online_stats.players.toString() +"/"+
+                        (props.server.server_properties["max-players"] || 1).toString()}</p>
             }
 
                 <Icon className={"indicator_icon"} path={(() => {

@@ -1,4 +1,4 @@
-import {Properties, ServerCreationGeneral, WorldGenerationSettings} from "../Settings/SettingsModels";
+import {Properties, ServerCreationGeneral, WorldGenerationSettings} from "../ServerInfo/SettingsModels";
 import Row from "../UtilComponents/ResponsiveFormRow";
 import React from "react";
 

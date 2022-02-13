@@ -26,7 +26,7 @@ function Home() {
         update_servers()
         const interval = setInterval(() => {
             update_servers()
-        }, 5000);
+        }, 5000 );
         return () => clearInterval(interval);
     }, []);
 

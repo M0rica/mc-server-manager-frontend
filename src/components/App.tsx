@@ -5,8 +5,8 @@ import {BrowserRouter, Link, Outlet, Route, Routes, useLocation} from "react-rou
 
 import CreateServer from "./CreateServer/CreateServer";
 import Home from "./Home/home";
-import Settings from "./settings";
-import ServerTabs from "./Settings/ServerInfo";
+import Settings from "./Settings/Settings";
+import ServerTabs from "./ServerInfo/ServerInfo";
 import Icon from "@mdi/react";
 import {mdiCog, mdiPlus, mdiViewList} from "@mdi/js";
 import {default_ip} from "../utils/globals";
@@ -41,7 +41,7 @@ const Layout = () => {
         <div className="content">
             <Outlet/>
         </div>
-        <h1>Footer</h1>
+
     </div>
 };
 
@@ -49,7 +49,6 @@ function App() {
     const [versions, set_versions] = useState(["latest"])
     useEffect(() => {
             const ip = default_ip + "/api/available_versions"
-            console.log("Fetching")
             fetch(ip)
                 .then(response => response.json())
                 .then((vers: { versions: string[] }) => {

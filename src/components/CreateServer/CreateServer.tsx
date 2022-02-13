@@ -3,7 +3,7 @@ import React, {useState} from "react";
 import "./CreateServer.css"
 import {default_ip} from "../../utils/globals";
 import {useNavigate} from "react-router-dom";
-import {ServerCreationGeneral, WorldGenerationSettings} from "../Settings/SettingsModels";
+import {ServerCreationGeneral, WorldGenerationSettings} from "../ServerInfo/SettingsModels";
 import {GeneralCreateForm, WorldGeneration} from "../SettingsFields/SettingsFields";
 
 type creation_data = ServerCreationGeneral & WorldGenerationSettings
